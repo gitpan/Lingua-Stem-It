@@ -3,7 +3,6 @@ package Lingua::Stem::It;
 use strict;
 
 
-use strict;
 use Exporter;
 use Carp;
 use vars qw (@ISA @EXPORT_OK @EXPORT %EXPORT_TAGS $VERSION);
@@ -62,7 +61,7 @@ sub stem {
             next;
         }
 
-		$_ = stem_word($_);
+	$_ = stem_word($_);
 
         $Stem_Cache->{$original_word} = $_ if $Stem_Caching;
     }

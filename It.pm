@@ -13,7 +13,7 @@ BEGIN {
     @EXPORT_OK   = qw (stem stem_word clear_stem_cache stem_caching);
     %EXPORT_TAGS = ();
 }
-$VERSION = "0.01";
+$VERSION = "0.02";
 
 my $Stem_Caching  = 0;
 my $Stem_Cache    = {};
@@ -75,6 +75,7 @@ sub stem {
 sub stem_word {
 
 	our($word) = @_;
+	my @suffix;
 
 	$word = lc $word;
 
@@ -171,7 +172,7 @@ sub stem_word {
 	#### Search for the longest among the following suffixes, 
 	#### and perform the action indicated
 	
-	my @suffix = qw(
+	@suffix = qw(
 		anza   anze   
 		ico   ici   ica   ice   iche   ichi   
 		ismo   ismi   
@@ -185,7 +186,7 @@ sub stem_word {
 	#### delete if in R2 
 	$step1 += stem_killer( $R2, "", "", @suffix );
 
-	my @suffix = qw(
+	@suffix = qw(
 		icazione   icazioni   icatore   icatori
 		azione   azioni   atore   atori
 	);
@@ -194,35 +195,35 @@ sub stem_word {
 	#### if preceded by ic, delete if in R2 
 	$step1 += stem_killer( $R2, "", "", @suffix );
 
-	my @suffix = qw(
+	@suffix = qw(
 		logia   logie 
 	);
 
 	#### replace with log if in R2 
 	$step1 += stem_killer( $R2, "", "log", @suffix );
 
-	my @suffix = qw(
+	@suffix = qw(
 		uzione   uzioni   usione   usioni 
 	);
 
 	#### replace with u if in R2 
 	$step1 += stem_killer( $R2, "", "u", @suffix );
 
-	my @suffix = qw(
+	@suffix = qw(
 		enza   enze 
 	);
 
 	#### replace with ente if in R2 
 	$step1 += stem_killer( $R2, "", "ente", @suffix );
 
-	my @suffix = qw(
+	@suffix = qw(
 		amento   amenti   imento   imenti 
 	);
 
 	#### delete if in RV 
 	$step1 += stem_killer( $RV, "", "", @suffix );
 
-	my @suffix = qw(
+	@suffix = qw(
 		amente 
 	);
 
@@ -235,7 +236,7 @@ sub stem_word {
 		   || stem_killer( $R2, "(os|ic|abil)", "", @suffix )
 		   || stem_killer( $R1, "",             "", @suffix );
 
-	my @suffix = qw(
+	@suffix = qw(
 		it‡
 	);
 
@@ -245,7 +246,7 @@ sub stem_word {
 		   || stem_killer( $R2, "",             "", @suffix );
 
 
-	my @suffix = qw(
+	@suffix = qw(
 		ivo   ivi   iva   ive 
 	);
 
@@ -281,18 +282,18 @@ sub stem_word {
 	#### Step 3a 
 	#### Delete a final a, e, i, o, ‡, Ë, Ï or Ú if it is in RV, 
 	#### and a preceding i if it is in RV
-	if($RV =~ s/[aeio‡ËÏÚ]i$//) {
-		$word =~ s/[aeio‡ËÏÚ]i$//;
-	} else {
-		if($RV =~ s/[aeio‡ËÏÚ]$//) {
-			$word =~ s/[aeio‡ËÏÚ]$//;
-		}
+	if($RV =~ s/i?[aeio‡ËÏÚ]$//) {
+		$word =~ s/i?[aeio‡ËÏÚ]$//;
+	#} else {
+	#	if($RV =~ s/[aeio‡ËÏÚ]$//) {
+	#		$word =~ s/[aeio‡ËÏÚ]$//;
+	#	}
 	}
 
 	#### Step 3b 
 	#### Replace final ch (or gh) with c (or g) if in RV
-	if($RV =~ s/([cg])h/$1/) {
-		$word =~ s/([cg])h/$1/;
+	if($RV =~ s/([cg])h$/$1/) {
+		$word =~ s/([cg])h$/$1/;
 	}
 
 	#### Finally,
@@ -366,7 +367,7 @@ returning the stemmed words.
 
 The algorithm is implemented exactly (I hope :-) as described in:
 
-    http://snowball.tartarus.org/italian/stemmer.html
+    http://snowball.tartarus.org/algorithms/italian/stemmer.html
 
 The code is carefully crafted to work in conjunction with the L<Lingua::Stem>
 module by Benjamin Franz, from which I've also borrowed some functionalities
@@ -384,8 +385,8 @@ words.
 Example:
 
   my $stemmed_words = Lingua::Stem::It::stem({ -words => \@words,
-                                              -locale => 'it',
-                                          -exceptions => \%exceptions,
+                                               -locale => 'it',
+                                               -exceptions => \%exceptions,
                           });
 
 =item stem_word( $word );
@@ -420,21 +421,6 @@ Clears the cache of stemmed words
 
 None by default.
 
-
-=head1 HISTORY
-
-=over 8
-
-=item *
-
-0.01 (2003-03-21)
-
-Original version; created by h2xs 1.20 with options
-
-  -ACX -n Lingua::Stem::It
-
-=back
-
 =head1 AUTHOR
 
 Aldo Calpini, dada@perl.it
@@ -445,9 +431,9 @@ Aldo Calpini, dada@perl.it
 
 =head1 COPYRIGHT
 
-Copyright 2003 Aldo Calpini, dada@perl.it. All rights reserved.
+Copyright (c) Aldo Calpini, dada@perl.it. All rights reserved.
 
-This software may be freely copied and distributed under the same
-terms and conditions as Perl.
+This library is free software; you can redistribute it and/or 
+modify it under the same terms as Perl itself.
 
 =cut

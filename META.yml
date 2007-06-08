@@ -1,0 +1,16 @@
+---
+name: Lingua-Stem-It
+version: 0.02
+author:
+  - 'Aldo Calpini, dada@perl.it'
+abstract: Porter's stemming algorithm for Italian
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
+provides:
+  Lingua::Stem::It:
+    file: It.pm
+    version: 0.02
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2
